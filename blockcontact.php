@@ -65,6 +65,7 @@ class Blockcontact extends Module
 		// If we try to update the settings
 		if (Tools::isSubmit('submitModule'))
 		{
+			Configuration::updateValue('BLOCKCONTACT_WHATSAPP', Tools::getValue('blockcontact_whatsapp'));
 			Configuration::updateValue('BLOCKCONTACT_TELNUMBER', Tools::getValue('blockcontact_telnumber'));
 			Configuration::updateValue('BLOCKCONTACT_EMAIL', Tools::getValue('blockcontact_email'));
 			$this->_clearCache('blockcontact.tpl');
@@ -90,6 +91,7 @@ class Blockcontact extends Module
 			$tpl = $params['blockcontact_tpl'];
 		if (!$this->isCached($tpl.'.tpl', $this->getCacheId()))
 			$smarty->assign(array(
+				'whatsapp_number' => Configuration::get('BLOCKCONTACT_WHATSAPP'),
 				'telnumber' => Configuration::get('BLOCKCONTACT_TELNUMBER'),
 				'email' => Configuration::get('BLOCKCONTACT_EMAIL')
 			));
@@ -119,6 +121,11 @@ class Blockcontact extends Module
 						$this->l('To edit the email addresses for the ‘Contact us’ page: you should go to the ‘Contacts’ page under the ‘Customer’ menu.').'<br/>'.
 						$this->l('To edit the contact details in the footer: you should go to the ‘Contact Information Block’ module.'),
 				'input' => array(
+					array(
+						'type' => 'text',
+						'label' => $this->l('WhatsApp number'),
+						'name' => 'blockcontact_whatsapp',
+					),
 					array(
 						'type' => 'text',
 						'label' => $this->l('Telephone number'),
@@ -161,6 +168,7 @@ class Blockcontact extends Module
 	public function getConfigFieldsValues()
 	{
 		return array(
+			'blockcontact_whatsapp' => Tools::getValue('blockcontact_whatsapp', Configuration::get('BLOCKCONTACT_WHATSAPP')),
 			'blockcontact_telnumber' => Tools::getValue('blockcontact_telnumber', Configuration::get('BLOCKCONTACT_TELNUMBER')),
 			'blockcontact_email' => Tools::getValue('blockcontact_email', Configuration::get('BLOCKCONTACT_EMAIL')),
 		);
