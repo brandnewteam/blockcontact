@@ -34,7 +34,7 @@ class Blockcontact extends Module
 		$this->name = 'blockcontact';
 		$this->author = 'PrestaShop';
 		$this->tab = 'front_office_features';
-		$this->version = '1.4.1';
+		$this->version = '2.0.0';
 
 		$this->bootstrap = true;
 		parent::__construct();
