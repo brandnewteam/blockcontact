@@ -63,9 +63,9 @@ class Blockcontact extends Module
 	{
 		$html = '';
 		// If we try to update the settings
-		if (Tools::isSubmit('submitModule'))
-		{
+		if (Tools::isSubmit('submitModule')) {
 			Configuration::updateValue('BLOCKCONTACT_WHATSAPP', Tools::getValue('blockcontact_whatsapp'));
+			Configuration::updateValue('BLOCKCONTACT_WHATSAPP_FLOATER', Tools::getValue('blockcontact_whatsapp_floater'));
 			Configuration::updateValue('BLOCKCONTACT_TELNUMBER', Tools::getValue('blockcontact_telnumber'));
 			Configuration::updateValue('BLOCKCONTACT_EMAIL', Tools::getValue('blockcontact_email'));
 			$this->_clearCache('blockcontact.tpl');
@@ -80,7 +80,7 @@ class Blockcontact extends Module
 
 	public function hookDisplayHeader($params)
 	{
-		$this->context->controller->addCSS(($this->_path).'blockcontact.css', 'all');
+		$this->context->controller->addCSS(($this->_path) . 'blockcontact.css', 'all');
 	}
 
 	public function hookDisplayRightColumn($params)
@@ -89,13 +89,14 @@ class Blockcontact extends Module
 		$tpl = 'blockcontact';
 		if (isset($params['blockcontact_tpl']) && $params['blockcontact_tpl'])
 			$tpl = $params['blockcontact_tpl'];
-		if (!$this->isCached($tpl.'.tpl', $this->getCacheId()))
+		if (!$this->isCached($tpl . '.tpl', $this->getCacheId()))
 			$smarty->assign(array(
 				'whatsapp_number' => Configuration::get('BLOCKCONTACT_WHATSAPP'),
+				'whatsapp_floater' => (bool) Configuration::get('BLOCKCONTACT_WHATSAPP_FLOATER'),
 				'telnumber' => Configuration::get('BLOCKCONTACT_TELNUMBER'),
 				'email' => Configuration::get('BLOCKCONTACT_EMAIL')
 			));
-		return $this->display(__FILE__, $tpl.'.tpl', $this->getCacheId());
+		return $this->display(__FILE__, $tpl . '.tpl', $this->getCacheId());
 	}
 
 	public function hookDisplayLeftColumn($params)
@@ -117,14 +118,33 @@ class Blockcontact extends Module
 					'title' => $this->l('Settings'),
 					'icon' => 'icon-cogs'
 				),
-				'description' => $this->l('This block displays in the header your phone number (‘Call us now’), and a link to the ‘Contact us’ page.').'<br/><br/>'.
-						$this->l('To edit the email addresses for the ‘Contact us’ page: you should go to the ‘Contacts’ page under the ‘Customer’ menu.').'<br/>'.
-						$this->l('To edit the contact details in the footer: you should go to the ‘Contact Information Block’ module.'),
+				'description' => $this->l('This block displays in the header your phone number (‘Call us now’), and a link to the ‘Contact us’ page.') . '<br/><br/>' .
+					$this->l('To edit the email addresses for the ‘Contact us’ page: you should go to the ‘Contacts’ page under the ‘Customer’ menu.') . '<br/>' .
+					$this->l('To edit the contact details in the footer: you should go to the ‘Contact Information Block’ module.'),
 				'input' => array(
 					array(
 						'type' => 'text',
 						'label' => $this->l('WhatsApp number'),
 						'name' => 'blockcontact_whatsapp',
+					),
+					array(
+						'type' => 'switch',
+						'label' => $this->l('WhatsApp floating button'),
+						'name' => 'blockcontact_whatsapp_floater',
+						'is_bool' => true,
+						'desc' => $this->l('Enable to add a floating button for WhatsApp.'),
+						'values' => array(
+							array(
+								'id' => 'wa_on',
+								'value' => true,
+								'label' => $this->l('Enabled')
+							),
+							array(
+								'id' => 'wa_off',
+								'value' => false,
+								'label' => $this->l('Disabled')
+							)
+						),
 					),
 					array(
 						'type' => 'text',
@@ -154,7 +174,7 @@ class Blockcontact extends Module
 
 		$helper->identifier = $this->identifier;
 		$helper->submit_action = 'submitModule';
-		$helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+		$helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
 		$helper->token = Tools::getAdminTokenLite('AdminModules');
 		$helper->tpl_vars = array(
 			'fields_value' => $this->getConfigFieldsValues(),
@@ -169,6 +189,7 @@ class Blockcontact extends Module
 	{
 		return array(
 			'blockcontact_whatsapp' => Tools::getValue('blockcontact_whatsapp', Configuration::get('BLOCKCONTACT_WHATSAPP')),
+			'blockcontact_whatsapp_floater' => Tools::getValue('blockcontact_whatsapp_floater', Configuration::get('BLOCKCONTACT_WHATSAPP_FLOATER')),
 			'blockcontact_telnumber' => Tools::getValue('blockcontact_telnumber', Configuration::get('BLOCKCONTACT_TELNUMBER')),
 			'blockcontact_email' => Tools::getValue('blockcontact_email', Configuration::get('BLOCKCONTACT_EMAIL')),
 		);
